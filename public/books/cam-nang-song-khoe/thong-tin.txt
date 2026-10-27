@@ -1,0 +1,5 @@
+nhan: Cẩm nang
+thu-tu: 5
+tac-gia: Lê Hùng Linh
+nam: 2026
+gioi-thieu: Mười hai chương gom các khuyến nghị sức khoẻ có cơ sở khoa học vững nhất thành những việc làm được ngay trong nhịp sống đô thị Việt Nam: vận động, dinh dưỡng, giấc ngủ, phòng bệnh, sức khoẻ tinh thần, vi chất, nội tiết, tiêu hoá, môi trường sống và sơ cứu. Mỗi chương kết bằng mục gỡ ba hiểu lầm phổ biến, cuối sách có kế hoạch 30 ngày.

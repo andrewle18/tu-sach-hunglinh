@@ -1,0 +1,5 @@
+nhan: Giáo trình
+thu-tu: 4
+tac-gia: Lê Hùng Linh
+nam: 2026
+gioi-thieu: Giáo trình kinh tế học vĩ mô bốn mươi chương, bảy phần: đo lường, tăng trưởng dài hạn, tiền tệ, chu kỳ ngắn hạn, chính sách, kinh tế mở, lịch sử và tranh luận. Theo truyền thống giáo trình Âu Mỹ, có hình minh hoạ, ví dụ tình huống, câu hỏi ôn tập, bài tập kèm đáp án và bảng thuật ngữ, với số liệu và ví dụ lấy từ chính nền kinh tế Việt Nam.

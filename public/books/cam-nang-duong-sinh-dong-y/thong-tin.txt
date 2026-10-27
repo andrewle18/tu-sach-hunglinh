@@ -1,0 +1,5 @@
+nhan: Cẩm nang
+thu-tu: 6
+tac-gia: Lê Hùng Linh
+nam: 2026
+gioi-thieu: Trình bày có hệ thống khung lý luận Đông y, từ âm dương, ngũ hành, khí huyết, tạng phủ kinh lạc tới ăn uống, vận động và dưỡng sinh theo mùa, rồi đặt từng điều cạnh bằng chứng y học hiện đại để bạn biết đâu là điều áp dụng an toàn và đâu là giới hạn. Dựa trên truyền thống Tuệ Tĩnh và Hải Thượng Lãn Ông.

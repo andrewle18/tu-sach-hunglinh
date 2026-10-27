@@ -165,8 +165,27 @@ function parseEpub(file) {
     }
   }
   // chỉ giữ hai cấp đầu (phần, chương)
-  const entries = toc.filter((t) => t.level <= 2 && t.file);
+  let entries = toc.filter((t) => t.level <= 2 && t.file);
   entries.forEach((e, i) => { e.hasChildren = entries[i + 1] && entries[i + 1].level > e.level; });
+  // Mục cấp 1 là "phần" khi tên bắt đầu bằng Phần/Part/Quyển, hoặc khi các mục con
+  // của nó là "Chương ...". Mục cấp 1 khác (chương, lời nói đầu, phụ lục...) là một
+  // trang trọn vẹn: mục con của nó chỉ là tiêu đề nhỏ bên trong, không tách riêng.
+  const PART_RE = /^\s*(phần|phan|part|quyển|quyen|tập|book)\s+[\divxlcdm]+/i;
+  const CHAP_RE = /^\s*(chương|chuong|chapter|bài)\s+\d+/i;
+  let parent = null;
+  for (const e of entries) {
+    if (e.level === 1) {
+      parent = e;
+      e.isPart = e.hasChildren && PART_RE.test(e.title);
+    } else if (parent && !parent.isPart && CHAP_RE.test(e.title) && !CHAP_RE.test(parent.title)) {
+      parent.isPart = true;
+    }
+  }
+  parent = null;
+  entries = entries.filter((e) => {
+    if (e.level === 1) { parent = e; return true; }
+    return parent && parent.isPart;
+  });
 
   return { z, meta, spine, coverItem, entries };
 }
@@ -219,10 +238,13 @@ function buildUnits(epub, imgBase, imgOut) {
     else merged.push(s);
   }
 
-  const hasParts = entries.some((e) => e.level === 1 && e.hasChildren);
-  let part = hasParts ? "Mở đầu" : "Nội dung", seenPart = false;
+  const hasParts = entries.some((e) => e.isPart);
+  const CHAP = /^\s*(chương|chuong|chapter|bài)\s+\d+/i;
+  const firstChap = merged.findIndex((s) => s.entry && CHAP.test(s.entry.title));
+  let lastChap = -1; merged.forEach((s, i) => { if (s.entry && CHAP.test(s.entry.title)) lastChap = i; });
+  let part = hasParts || firstChap > 0 ? "Mở đầu" : "Nội dung", seenPart = false;
   const units = [];
-  for (const s of merged) {
+  for (const [si, s] of merged.entries()) {
     let html = s.html;
     const e = s.entry;
     let title = e ? e.title : "";
@@ -243,14 +265,16 @@ function buildUnits(epub, imgBase, imgOut) {
     });
     html = html.replace(/\n{2,}/g, "\n").trim();
 
-    if (e && e.level === 1 && e.hasChildren) {
+    if (e && e.isPart) {
       part = prettyPart(title); seenPart = true;
       if (stripTags(html).length > 200 || /<img/.test(html)) units.push({ part, kind: "intro", title: part, html });
       continue;
     }
     if (e && e.level === 1 && hasParts && seenPart) {
-      // mục cấp 1 không có chương con, nằm sau các phần: kết luận, phụ lục...
+      // mục cấp 1 không phải phần, nằm sau các phần: kết luận, phụ lục...
       part = "Cuối sách";
+    } else if (!hasParts && firstChap >= 0) {
+      part = si < firstChap ? "Mở đầu" : si <= lastChap ? "Nội dung" : "Cuối sách";
     }
     if (!stripTags(html) && !/<img/.test(html)) continue;
     units.push({ part, kind: "chapter", title: title || "Không tên", html });

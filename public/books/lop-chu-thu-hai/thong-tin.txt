@@ -1,0 +1,5 @@
+nhan: Phê bình văn học
+thu-tu: 1
+tac-gia: Lê Hùng Linh
+nam: 2026
+gioi-thieu: Ba mươi sáu chương dạy cách đọc văn như người viết: nhìn ra lớp nghĩa thứ hai nằm dưới chữ, câu, giọng, chi tiết, ẩn dụ, biểu tượng và kiến trúc tác phẩm. Đi qua Truyện Kiều, Chí Phèo, Hai đứa trẻ, Số đỏ cùng Chekhov, Tolstoy, Flaubert, Hemingway, Kafka, Dostoevsky, và khép lại bằng một lần đọc trọn Chí Phèo từ câu đầu đến câu cuối.
