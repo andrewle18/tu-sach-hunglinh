@@ -1,56 +1,85 @@
 <!doctype html>
-<html lang="vi" data-page="home">
+<html lang="vi" data-page="home" data-chat="menu">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Thư viện · Hùng Linh</title>
-<meta name="description" content="Thư viện sách của Hùng Linh — đọc online và tải EPUB, PDF.">
+<meta name="description" content="Tủ sách của Hùng Linh: đọc online và tải EPUB, PDF.">
+<meta name="theme-color" content="#141414">
+<script>try{var u=localStorage.getItem('ui-theme');if(u)document.documentElement.setAttribute('data-ui',u)}catch(e){}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Noto+Serif:ital,wght@0,400;0,600;1,400&display=swap&subset=vietnamese" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;0,7..72,700;1,7..72,400&display=swap&subset=vietnamese" rel="stylesheet">
 <link rel="stylesheet" href="assets/app.css">
 </head>
 <body>
-<div class="wrap">
-  <header class="site-top">
-    <div class="brand">Tủ sách <b>Hùng&nbsp;Linh</b></div>
-    <div class="tag">Đọc online · Tải EPUB / PDF</div>
-  </header>
+<div class="app">
 
-  <section class="hero">
-    <p class="lead">Nơi lưu giữ các cuốn sách do Hùng Linh biên soạn. Đọc trực tiếp trên trình duyệt, hoặc tải bản EPUB và PDF về đọc trên mọi thiết bị.</p>
-    <div class="frieze" aria-hidden="true">
-      <!-- hoa sen -->
-      <svg viewBox="0 0 32 32"><path d="M16 27C10 22 6 17 16 6c10 11 6 16 0 21Z"/><path d="M16 27C9 24 4 20 5 13c7 2 10 7 11 14"/><path d="M16 27c7-3 12-7 11-14-7 2-10 7-11 14"/></svg>
-      <!-- pháp luân -->
-      <svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="11"/><circle cx="16" cy="16" r="3"/><path d="M16 5v22M5 16h22M8.2 8.2 23.8 23.8M23.8 8.2 8.2 23.8"/></svg>
-      <!-- ngôi sao David -->
-      <svg viewBox="0 0 32 32"><path d="M16 4 27 23 5 23Z"/><path d="M16 28 5 9 27 9Z"/></svg>
-      <!-- thánh giá -->
-      <svg viewBox="0 0 32 32"><path d="M16 4v24M8 12h16"/></svg>
-      <!-- trăng lưỡi liềm và sao -->
-      <svg viewBox="0 0 32 32"><path d="M20 6a11 11 0 1 0 0 20 9 9 0 1 1 0-20Z"/><path d="M25 10l1.1 2.4 2.6.3-1.9 1.8.5 2.6-2.3-1.2-2.3 1.2.5-2.6-1.9-1.8 2.6-.3z"/></svg>
-      <!-- âm dương -->
-      <svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="11"/><path d="M16 5a5.5 5.5 0 0 0 0 11 5.5 5.5 0 0 1 0 11"/><circle cx="16" cy="10.5" r="1"/><circle cx="16" cy="21.5" r="1"/></svg>
-      <!-- sao tám cánh -->
-      <svg viewBox="0 0 32 32"><rect x="7" y="7" width="18" height="18"/><rect x="7" y="7" width="18" height="18" transform="rotate(45 16 16)"/></svg>
-    </div>
-    <div class="rule-gold"></div>
+  <!-- THƯ VIỆN -->
+  <section class="view" id="v-lib">
+    <header class="lib-head">
+      <h1>Thư viện</h1>
+      <button class="round-btn" id="sortBtn" aria-label="Sắp xếp và kiểu xem">
+        <svg class="i" viewBox="0 0 24 24"><path d="M7 4v16M3 8l4-4 4 4M17 20V4M13 16l4 4 4-4"/></svg>
+      </button>
+    </header>
+    <label class="search" id="searchBox">
+      <svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <span class="sr">Tìm sách</span>
+      <input id="q" type="search" placeholder="Tìm trong tủ sách" autocomplete="off">
+      <button class="clear" id="qClear" type="button" aria-label="Xoá">×</button>
+    </label>
+    <nav class="chips" id="chips" aria-label="Lọc sách">
+      <button class="chip icon" id="filterBtn" aria-label="Lọc theo thể loại">
+        <svg class="i" viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>
+      </button>
+      <span class="sep"></span>
+      <button class="chip on" data-f="all">Tất cả</button>
+      <button class="chip" data-f="reading">Đang đọc</button>
+      <button class="chip" data-f="unread">Chưa đọc</button>
+      <button class="chip" data-f="done">Đã xong</button>
+    </nav>
+    <div class="count-line" id="countLine"></div>
+    <div class="shelf" id="shelf"></div>
   </section>
 
-  <main class="shelf">
-    <div class="shelf-head">
-      <h2>Trên kệ</h2>
-      <span id="count"></span>
-    </div>
-    <div class="grid" id="grid"></div>
-  </main>
+  <!-- TRANG CHỦ -->
+  <section class="view" id="v-home" hidden>
+    <header class="lib-head"><h1>Tủ sách</h1></header>
+    <div id="homeHero"></div>
+    <div class="row-h"><h3>Mới trên kệ</h3><button data-go="lib">Xem tất cả</button></div>
+    <div class="rail" id="railNew"></div>
+    <div id="railCatWrap"></div>
+    <div class="about"><b>Tủ sách Hùng Linh</b>Nơi lưu giữ các cuốn sách do Hùng Linh biên soạn: giáo trình, sách phổ thông và những bài đọc sâu. Đọc ngay trên trình duyệt, hoặc tải bản EPUB và PDF về máy đọc của bạn.</div>
+  </section>
 
-  <footer class="site-foot">
-    <div>© 2026 Hùng Linh. Giữ mọi quyền.</div>
-    <div class="wm">by: hunglinhbt@gmail.com</div>
-  </footer>
+  <!-- THÊM -->
+  <section class="view" id="v-more" hidden>
+    <header class="lib-head"><h1>Thêm</h1></header>
+    <div class="more-list">
+      <button id="mChat"><svg class="i" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></svg>Nhắn cho tác giả<span class="r">›</span></button>
+      <button id="mTheme"><svg class="i" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z"/></svg>Giao diện<span class="r" id="mThemeVal"></span></button>
+      <button id="mReset"><svg class="i" viewBox="0 0 24 24"><path d="M4 4v6h6M20 20v-6h-6"/><path d="M20 10A8 8 0 0 0 6 6L4 10M4 14a8 8 0 0 0 14 4l2-4"/></svg>Xoá tiến độ đọc trên máy này<span class="r">›</span></button>
+    </div>
+    <p class="foot-note">© 2026 Hùng Linh. Giữ mọi quyền.<br>by: hunglinhbt@gmail.com</p>
+  </section>
 </div>
+
+<div class="nowbar" id="nowbar" hidden role="button" tabindex="0" aria-label="Đọc tiếp">
+  <img id="nowImg" alt="">
+  <div class="tt"><b id="nowTitle"></b><span id="nowSub"></span></div>
+  <span class="go"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
+</div>
+
+<nav class="tabbar" aria-label="Điều hướng">
+  <button data-tab="home"><svg class="i" viewBox="0 0 24 24"><path d="M4 11 12 4l8 7v9h-5v-6H9v6H4z"/></svg>Trang chủ</button>
+  <button data-tab="lib" class="on"><svg class="i" viewBox="0 0 24 24"><path d="M5 4h3v16H5zM10 4h3v16h-3zM15.5 5.2l2.9-.8 3.6 15-2.9.8z"/></svg>Thư viện</button>
+  <button data-tab="more"><svg class="i" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>Thêm</button>
+</nav>
+
+<div class="sheet-bg" id="sheetBg"></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true"></div>
+
 <script src="books.js"></script>
 <script src="assets/library.js"></script>
 <script src="assets/chat.js" defer></script>

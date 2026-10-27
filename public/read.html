@@ -2,43 +2,69 @@
 <html lang="vi" data-page="read" data-read="light">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Đang đọc…</title>
+<script>try{var t=localStorage.getItem('read');if(t)document.documentElement.setAttribute('data-read',t)}catch(e){}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,600&family=Noto+Serif:ital,wght@0,400;0,600;1,400&display=swap&subset=vietnamese" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=Noto+Sans:ital,wght@0,400;0,600;1,400&display=swap&subset=vietnamese" rel="stylesheet">
 <link rel="stylesheet" href="assets/app.css">
 </head>
 <body>
 <div class="reader">
-  <div class="topbar">
-    <button class="tool menu-btn" id="menuBtn" title="Mục lục" aria-label="Mục lục">
-      <svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
-    </button>
-    <a class="home" href="index.html"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>Thư viện</a>
-    <div class="bt" id="bookTitle">Tôn giáo thế giới</div>
-    <div class="tools">
-      <button class="tool" id="fsDown" title="Chữ nhỏ hơn" aria-label="Chữ nhỏ hơn">A−</button>
-      <button class="tool" id="fsUp" title="Chữ lớn hơn" aria-label="Chữ lớn hơn">A+</button>
-      <button class="tool" id="themeBtn" title="Đổi nền đọc" aria-label="Đổi nền đọc">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3v18" fill="currentColor" stroke="none"/></svg>
-      </button>
-      <a class="tool dl" id="dlEpub" href="#" download title="Tải EPUB"><svg viewBox="0 0 24 24"><path d="M12 3v13m0 0 4-4m-4 4-4-4M5 21h14"/></svg><span class="txt">EPUB</span></a>
-      <a class="tool dl" id="dlPdf" href="#" download title="Tải PDF"><svg viewBox="0 0 24 24"><path d="M12 3v13m0 0 4-4m-4 4-4-4M5 21h14"/></svg><span class="txt">PDF</span></a>
-    </div>
-  </div>
+  <header class="rbar top">
+    <a class="ibtn" href="index.html" aria-label="Về thư viện"><svg class="i" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></a>
+    <button class="ibtn" id="tocBtn" aria-label="Mục lục"><svg class="i" viewBox="0 0 24 24"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg></button>
+    <div class="bt" id="bookTitle">Đang tải…<small id="chapTitle"></small></div>
+    <button class="ibtn" id="aaBtn" aria-label="Cỡ chữ và giao diện"><span class="aa"><small>A</small>A</span></button>
+    <button class="ibtn" id="dlBtn" aria-label="Tải sách"><svg class="i" viewBox="0 0 24 24"><path d="M12 3v13m0 0 5-5m-5 5-5-5M5 21h14"/></svg></button>
+  </header>
 
-  <div class="reader-body">
-    <nav class="toc" id="toc"></nav>
-    <div class="scrim" id="scrim"></div>
-    <div class="reading">
-      <article class="scroller" id="scroller">
-        <p style="text-align:center;color:var(--rmuted)">Đang tải nội dung…</p>
-      </article>
-      <nav class="chnav" id="chnav"></nav>
-    </div>
-  </div>
+  <main id="scroller">
+    <article class="page" id="page"><p style="text-align:center;color:var(--rmuted)">Đang tải nội dung…</p></article>
+    <div class="ch-end" id="chEnd"></div>
+  </main>
+
+  <footer class="rbar bot">
+    <div class="pos-row"><span id="posL"></span><span id="posR"></span></div>
+    <input type="range" class="slider" id="slider" min="0" max="0" value="0" aria-label="Chuyển chương">
+  </footer>
 </div>
+
+<div class="drawer-bg" id="dBg"></div>
+<aside class="drawer" id="drawer" aria-label="Mục lục">
+  <div class="dh"><img id="dImg" alt=""><div><b id="dTitle"></b><span id="dPct"></span></div></div>
+  <nav class="list" id="toc"></nav>
+</aside>
+
+<section class="panel" id="aaPanel" aria-label="Cài đặt hiển thị">
+  <div class="grab"></div>
+  <div class="lbl">Cỡ chữ</div>
+  <div class="fs-row"><span class="a1">A</span><input type="range" class="slider" id="fs" min="0" max="7" step="1"><span class="a2">A</span></div>
+  <div class="lbl">Nền</div>
+  <div class="seg" id="themes">
+    <button class="sw" data-t="light" style="background:#fff;color:#1a1a1a">Trắng</button>
+    <button class="sw" data-t="sepia" style="background:#f4ecd8;color:#3d3426">Giấy</button>
+    <button class="sw" data-t="green" style="background:#d9ead3;color:#1f2a1d">Xanh</button>
+    <button class="sw" data-t="dark" style="background:#000;color:#d6d6d6;border-color:#333">Đen</button>
+  </div>
+  <div class="lbl">Phông chữ</div>
+  <div class="seg" id="fonts">
+    <button data-f="serif" style="font-family:Literata,serif">Literata</button>
+    <button data-f="sans" style="font-family:'Noto Sans',sans-serif">Noto Sans</button>
+  </div>
+  <div class="lbl">Giãn dòng và lề</div>
+  <div class="seg" id="spacing">
+    <button data-s="tight">Hẹp</button><button data-s="normal">Vừa</button><button data-s="wide">Rộng</button>
+  </div>
+</section>
+
+<section class="panel" id="dlPanel" aria-label="Tải sách">
+  <div class="grab"></div>
+  <div class="lbl">Tải về máy</div>
+  <div class="seg" id="dlRow"></div>
+</section>
+
 <script src="books.js"></script>
 <script src="assets/reader.js"></script>
 <script src="assets/chat.js" defer></script>

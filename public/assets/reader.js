@@ -1,127 +1,189 @@
-(function(){
+/* Trình đọc kiểu máy đọc sách: thanh công cụ tự ẩn, tiến độ phần trăm, cỡ chữ, nền, mục lục. */
+(function () {
   var qs = new URLSearchParams(location.search);
-  var CAT = window.CATALOG||[];
-  var slug = qs.get('book') || (CAT[0] && CAT[0].slug) || '';
-  var meta = CAT.find(function(b){return b.slug===slug;}) || {};
-  var LS = { get:function(k){try{return localStorage.getItem(k)}catch(e){return null}},
-             set:function(k,v){try{localStorage.setItem(k,v)}catch(e){}} };
+  var CAT = window.CATALOG || [];
+  var slug = qs.get("book") || (CAT[0] && CAT[0].slug) || "";
+  var meta = CAT.find(function (b) { return b.slug === slug; }) || {};
+  var LS = {
+    get: function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+    set: function (k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+  };
+  var $ = function (s) { return document.getElementById(s); };
+  var root = document.documentElement;
+  function esc(s) { return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
 
-  // tải nội dung sách
-  var sc = document.createElement('script');
-  sc.src = meta.content || ('books/'+slug+'/content.js');
+  var units = [], lens = [], cum = [], total = 1, idx = 0;
+  var WPM = 230;
+
+  var sc = document.createElement("script");
+  sc.src = meta.content || ("books/" + slug + "/content.js");
   sc.onload = init;
-  sc.onerror = function(){ document.getElementById('scroller').innerHTML =
-     '<p style="text-align:center;color:var(--rmuted)">Không tải được nội dung sách.</p>'; };
+  sc.onerror = function () { $("page").innerHTML = '<p style="text-align:center;color:var(--rmuted)">Không tải được nội dung sách.</p>'; };
   document.head.appendChild(sc);
 
-  var DIVIDER = '<div class="divider" aria-hidden="true">'
-    + '<svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="11"/><circle cx="16" cy="16" r="3"/><path d="M16 5v22M5 16h22M8.2 8.2 23.8 23.8M23.8 8.2 8.2 23.8"/></svg>'
-    + '<svg viewBox="0 0 32 32"><path d="M16 4 27 23 5 23Z"/><path d="M16 28 5 9 27 9Z"/></svg>'
-    + '<svg viewBox="0 0 32 32"><path d="M16 4v24M8 12h16"/></svg>'
-    + '</div>';
+  function words(html) { return (html.replace(/<[^>]+>/g, " ").match(/[^\s]+/g) || []).length; }
 
-  var units, idx=0;
+  function init() {
+    var B = window.BOOK;
+    units = B.units || [];
+    lens = units.map(function (u) { return Math.max(1, words(u.html)); });
+    var acc = 0; cum = lens.map(function (l) { var c = acc; acc += l; return c; }); total = acc || 1;
+    document.title = B.title + " · đang đọc";
+    $("bookTitle").firstChild.nodeValue = B.title;
+    $("dTitle").textContent = B.title;
+    if (meta.cover) $("dImg").src = meta.cover; else $("dImg").style.display = "none";
+    $("slider").max = Math.max(0, units.length - 1);
+    buildToc(); buildDownloads(); restorePrefs(); bind();
+    LS.set("opened:" + slug, String(Date.now()));
+    LS.set("last", slug);
 
-  function init(){
-    var B = window.BOOK; units = B.units;
-    document.title = B.title + ' — đang đọc';
-    document.getElementById('bookTitle').textContent = B.title;
-    var de=document.getElementById('dlEpub'), dp=document.getElementById('dlPdf');
-    if(meta.epub) de.href = meta.epub; else de.style.display='none';
-    if(meta.pdf)  dp.href = meta.pdf;  else dp.style.display='none';
-
-    buildToc();
-    restorePrefs();
-
-    var start = 0;
-    var h = location.hash.replace('#','');
-    if(h){ var f = units.findIndex(function(u){return u.id===h;}); if(f>=0) start=f; }
-    else { var last = LS.get('pos:'+slug); if(last){ var g=units.findIndex(function(u){return u.id===last;}); if(g>=0) start=g; } }
-    show(start, false);
-
-    bindTools();
+    var start = 0, frac = 0;
+    var h = location.hash.replace("#", "");
+    if (h) { var f = units.findIndex(function (u) { return u.id === h; }); if (f >= 0) start = f; }
+    else {
+      var last = LS.get("pos:" + slug);
+      var g = units.findIndex(function (u) { return u.id === last; });
+      if (g >= 0) { start = g; frac = parseFloat(LS.get("scroll:" + slug)) || 0; }
+    }
+    show(start, frac);
+    if (LS.get("prog:" + slug) === null) saveProgress();
   }
 
-  function buildToc(){
-    var toc = document.getElementById('toc');
-    var html='', curPart=null;
-    units.forEach(function(u,i){
-      if(u.part!==curPart){ curPart=u.part; html += '<h4>'+u.part+'</h4>'; }
-      var cls = 'toc-link' + (u.kind==='intro'?' intro':'');
-      var label = u.kind==='intro' ? 'Dẫn nhập' : u.title;
-      html += '<a class="'+cls+'" data-i="'+i+'" href="#'+u.id+'">'+label+'</a>';
+  function buildToc() {
+    var html = "", cur = null;
+    units.forEach(function (u, i) {
+      if (u.part !== cur) { cur = u.part; html += "<h4>" + esc(u.part) + "</h4>"; }
+      var label = u.kind === "intro" ? "Dẫn nhập" : u.title;
+      html += '<a href="#' + u.id + '" data-i="' + i + '" class="' + (u.kind === "intro" ? "intro" : "") + '"><span>' + esc(label) + '</span><em>' + Math.round(cum[i] / total * 100) + "%</em></a>";
     });
-    toc.innerHTML = html;
-    toc.addEventListener('click', function(e){
-      var a = e.target.closest('a'); if(!a) return;
-      e.preventDefault(); show(parseInt(a.dataset.i,10)); closeToc();
+    $("toc").innerHTML = html;
+    $("toc").addEventListener("click", function (e) {
+      var a = e.target.closest("a"); if (!a) return;
+      e.preventDefault(); closeAll(); show(+a.dataset.i, 0);
     });
   }
 
-  function show(i, push){
-    if(i<0||i>=units.length) return;
-    idx=i; var u=units[i];
-    var eyebrow = u.kind==='intro' ? u.part : u.part;
-    var titleHtml = u.kind==='intro'
-      ? '<h1 class="ch-title">'+u.part.replace(' · ',' — ')+'</h1>'
-      : '<div class="part-eyebrow">'+u.part+'</div><h1 class="ch-title">'+esc(u.title)+'</h1>';
-    document.getElementById('scroller').innerHTML =
-      titleHtml + DIVIDER + '<div class="content">'+u.html+'</div>';
-    document.querySelector('.reading').scrollTop = 0;
-    window.scrollTo(0,0);
-    // active toc
-    Array.prototype.forEach.call(document.querySelectorAll('.toc a'),function(a){
-      a.classList.toggle('active', parseInt(a.dataset.i,10)===i);
-      if(parseInt(a.dataset.i,10)===i) a.scrollIntoView({block:'nearest'});
-    });
-    renderNav();
-    if(push!==false) history.replaceState(null,'','#'+u.id);
-    else history.replaceState(null,'','#'+u.id);
-    LS.set('pos:'+slug, u.id);
+  function buildDownloads() {
+    var h = "";
+    if (meta.epub) h += '<a class="btn" href="' + esc(meta.epub) + '" download style="color:var(--rink);border-color:var(--rrule);background:none">EPUB</a>';
+    if (meta.pdf) h += '<a class="btn" href="' + esc(meta.pdf) + '" download style="color:var(--rink);border-color:var(--rrule);background:none">PDF</a>';
+    $("dlRow").innerHTML = h || '<span style="color:var(--rmuted)">Chưa có file tải cho cuốn này.</span>';
+    if (!h) $("dlBtn").style.display = "none";
   }
 
-  function renderNav(){
-    var nav=document.getElementById('chnav'); var h='';
-    if(idx>0){ var p=units[idx-1];
-      h+='<a class="prev" data-i="'+(idx-1)+'" href="#'+p.id+'"><span class="lab">Trước</span>'+navLabel(p)+'</a>'; }
-    else h+='<a class="prev disabled"></a>';
-    if(idx<units.length-1){ var n=units[idx+1];
-      h+='<a class="next" data-i="'+(idx+1)+'" href="#'+n.id+'"><span class="lab">Tiếp</span>'+navLabel(n)+'</a>'; }
-    else h+='<a class="next disabled"></a>';
-    nav.innerHTML=h;
-    nav.querySelectorAll('a[data-i]').forEach(function(a){
-      a.addEventListener('click',function(e){e.preventDefault();show(parseInt(a.dataset.i,10));});
+  function label(u) { return u.kind === "intro" ? u.part : u.title; }
+
+  function show(i, frac) {
+    if (i < 0 || i >= units.length) return;
+    idx = i; var u = units[i];
+    var head = u.kind === "intro"
+      ? '<h1 class="ch-title">' + esc(u.part.replace(" · ", ": ")) + "</h1>"
+      : (u.part && u.part !== u.title ? '<div class="eyebrow">' + esc(u.part) + "</div>" : "") + '<h1 class="ch-title">' + esc(u.title) + "</h1>";
+    $("page").innerHTML = head + '<div class="orn">· · ·</div><div class="content">' + u.html + "</div>";
+    var nx = units[i + 1];
+    $("chEnd").innerHTML = nx
+      ? '<button class="next" id="nextBtn"><small>Chương tiếp</small><b>' + esc(label(nx)) + "</b></button>"
+      : '<p class="fin">Hết sách. Cảm ơn bạn đã đọc.</p><p><a class="next" href="index.html" style="display:inline-flex"><small>Về</small><b>Thư viện</b></a></p>';
+    if (nx) $("nextBtn").onclick = function () { show(i + 1, 0); };
+    $("chapTitle").textContent = label(u);
+    $("slider").value = i; setSliderFill();
+    document.querySelectorAll("#toc a").forEach(function (a) { a.classList.toggle("active", +a.dataset.i === i); });
+    history.replaceState(null, "", "#" + u.id);
+    LS.set("pos:" + slug, u.id);
+    requestAnimationFrame(function () {
+      var max = document.documentElement.scrollHeight - innerHeight;
+      window.scrollTo(0, frac ? Math.round(frac * max) : 0);
+      updatePos(); saveProgress();
+    });
+    root.classList.remove("chrome-off");
+  }
+
+  function chapFrac() {
+    var max = document.documentElement.scrollHeight - innerHeight;
+    return max > 0 ? Math.min(1, Math.max(0, scrollY / max)) : 1;
+  }
+  function overall() { return (cum[idx] + lens[idx] * chapFrac()) / total * 100; }
+
+  function updatePos() {
+    if (!units.length) return;
+    var f = chapFrac(), pct = overall();
+    var mins = Math.ceil(lens[idx] * (1 - f) / WPM);
+    $("posL").textContent = f > 0.985 ? "Hết chương" : (mins <= 1 ? "Còn dưới 1 phút trong chương" : "Còn " + mins + " phút trong chương");
+    $("posR").textContent = Math.max(0, Math.round(pct)) + "%";
+    $("dPct").textContent = Math.round(pct) + "% đã đọc";
+  }
+  var saveT = null;
+  function saveProgress() {
+    clearTimeout(saveT);
+    saveT = setTimeout(function () {
+      LS.set("prog:" + slug, overall().toFixed(2));
+      LS.set("scroll:" + slug, chapFrac().toFixed(4));
+    }, 250);
+  }
+
+  /* ---------- thanh công cụ tự ẩn ---------- */
+  var lastY = 0;
+  window.addEventListener("scroll", function () {
+    var y = scrollY;
+    if (y > lastY + 12 && y > 80) root.classList.add("chrome-off");
+    else if (y < lastY - 40) root.classList.remove("chrome-off");
+    lastY = y; updatePos(); saveProgress();
+  }, { passive: true });
+  $("scroller").addEventListener("click", function (e) {
+    if (e.target.closest("a,button,input,figure,table")) return;
+    if (window.getSelection && String(window.getSelection())) return;
+    root.classList.toggle("chrome-off");
+  });
+
+  /* ---------- thanh trượt chương ---------- */
+  function setSliderFill(el) {
+    el = el || $("slider");
+    var mx = +el.max || 1; el.style.setProperty("--v", (+el.value / mx * 100) + "%");
+  }
+  $("slider").addEventListener("input", function () {
+    setSliderFill();
+    var u = units[+this.value]; $("posL").textContent = label(u); $("posR").textContent = Math.round(cum[+this.value] / total * 100) + "%";
+  });
+  $("slider").addEventListener("change", function () { show(+this.value, 0); });
+
+  /* ---------- bảng điều khiển ---------- */
+  var SIZES = [0.94, 1.02, 1.1, 1.18, 1.28, 1.4, 1.54, 1.7];
+  var SPACING = { tight: ["1.55", "40em"], normal: ["1.75", "36em"], wide: ["1.95", "32em"] };
+  function applyPrefs() {
+    var si = parseInt(LS.get("fs"), 10); if (isNaN(si)) si = 3;
+    root.style.setProperty("--fs", SIZES[si] + "rem"); $("fs").value = si; setSliderFill($("fs"));
+    var t = LS.get("read") || "light"; root.setAttribute("data-read", t);
+    document.querySelectorAll("#themes button").forEach(function (b) { b.classList.toggle("on", b.dataset.t === t); });
+    var f = LS.get("rfont") || "serif";
+    root.style.setProperty("--rfont", f === "sans" ? "'Noto Sans',var(--sans)" : "var(--serif)");
+    document.querySelectorAll("#fonts button").forEach(function (b) { b.classList.toggle("on", b.dataset.f === f); });
+    var s = LS.get("rspace") || "normal";
+    root.style.setProperty("--lh", SPACING[s][0]); root.style.setProperty("--measure", SPACING[s][1]);
+    document.querySelectorAll("#spacing button").forEach(function (b) { b.classList.toggle("on", b.dataset.s === s); });
+  }
+  function restorePrefs() { applyPrefs(); }
+  function keepPlace(fn) { var f = chapFrac(); fn(); applyPrefs(); requestAnimationFrame(function () { window.scrollTo(0, f * (document.documentElement.scrollHeight - innerHeight)); updatePos(); }); }
+  $("fs").addEventListener("input", function () { var v = this.value; keepPlace(function () { LS.set("fs", v); }); });
+  $("themes").addEventListener("click", function (e) { var b = e.target.closest("button"); if (b) { LS.set("read", b.dataset.t); applyPrefs(); } });
+  $("fonts").addEventListener("click", function (e) { var b = e.target.closest("button"); if (b) keepPlace(function () { LS.set("rfont", b.dataset.f); }); });
+  $("spacing").addEventListener("click", function (e) { var b = e.target.closest("button"); if (b) keepPlace(function () { LS.set("rspace", b.dataset.s); }); });
+
+  var bg = $("dBg");
+  function closeAll() { ["drawer", "aaPanel", "dlPanel"].forEach(function (id) { $(id).classList.remove("open"); }); bg.classList.remove("open"); }
+  function openOne(id) { closeAll(); $(id).classList.add("open"); bg.classList.add("open"); root.classList.remove("chrome-off"); }
+  function bind() {
+    $("tocBtn").onclick = function () { openOne("drawer"); var a = document.querySelector("#toc a.active"); if (a) a.scrollIntoView({ block: "center" }); };
+    $("aaBtn").onclick = function () { openOne("aaPanel"); };
+    $("dlBtn").onclick = function () { openOne("dlPanel"); };
+    bg.onclick = closeAll;
+    document.addEventListener("keydown", function (e) {
+      if (/INPUT|TEXTAREA/.test(e.target.tagName)) return;
+      if (e.key === "ArrowRight") show(idx + 1, 0);
+      if (e.key === "ArrowLeft") show(idx - 1, 0);
+      if (e.key === "Escape") closeAll();
+    });
+    window.addEventListener("pagehide", function () {
+      LS.set("prog:" + slug, overall().toFixed(2)); LS.set("scroll:" + slug, chapFrac().toFixed(4));
     });
   }
-  function navLabel(u){ return esc(u.kind==='intro'?u.part.replace(' · ',' — '):u.title); }
-
-  // ----- công cụ: cỡ chữ, nền, mục lục -----
-  var SIZES=[1.02,1.1,1.16,1.24,1.34,1.46], si=2;
-  var THEMES=['light','sepia','dark'];
-  function applyFs(){ document.documentElement.style.setProperty('--fs',SIZES[si]+'rem'); LS.set('fs',si); }
-  function restorePrefs(){
-    var f=LS.get('fs'); if(f!==null){ si=Math.max(0,Math.min(SIZES.length-1,parseInt(f,10))); }
-    applyFs();
-    var t=LS.get('read'); if(t&&THEMES.indexOf(t)>=0) document.documentElement.setAttribute('data-read',t);
-  }
-  function bindTools(){
-    document.getElementById('fsUp').onclick=function(){ si=Math.min(SIZES.length-1,si+1); applyFs(); };
-    document.getElementById('fsDown').onclick=function(){ si=Math.max(0,si-1); applyFs(); };
-    document.getElementById('themeBtn').onclick=function(){
-      var cur=document.documentElement.getAttribute('data-read');
-      var nx=THEMES[(THEMES.indexOf(cur)+1)%THEMES.length];
-      document.documentElement.setAttribute('data-read',nx); LS.set('read',nx);
-    };
-    document.getElementById('menuBtn').onclick=function(){ document.documentElement.setAttribute('data-toc','open'); };
-    document.getElementById('scrim').onclick=closeToc;
-    document.addEventListener('keydown',function(e){
-      if(e.target.tagName==='INPUT') return;
-      if(e.key==='ArrowRight') show(idx+1);
-      if(e.key==='ArrowLeft') show(idx-1);
-      if(e.key==='Escape') closeToc();
-    });
-  }
-  function closeToc(){ document.documentElement.removeAttribute('data-toc'); }
-
-  function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 })();

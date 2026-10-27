@@ -51,6 +51,7 @@
     if (open) { render(); (nameI.value ? msgI : nameI).focus(); }
   }
   fab.addEventListener("click", function () { toggle(panel.hidden); });
+  window.openChat = function () { toggle(true); };
   root.querySelector(".chat-x").addEventListener("click", function () { toggle(false); });
   document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !panel.hidden) toggle(false); });
 
