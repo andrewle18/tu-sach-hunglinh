@@ -1,0 +1,12 @@
+{
+  "name": "tu-sach-hunglinh",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "wrangler": "^4.153.0"
+  }
+}
