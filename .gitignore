@@ -1,0 +1,10 @@
+.dev.vars
+.dev.vars.*
+.wrangler/
+node_modules/
+.DS_Store
+*.log
+
+# Sinh tự động khi build
+public/books.js
+public/books/*/auto/
