@@ -1,0 +1,9 @@
+tieu-de: Tôn giáo thế giới
+phu-de: Dẫn nhập các truyền thống tâm linh lớn của nhân loại
+tac-gia: Hùng Linh
+nam: 2026
+nhan: Giáo trình
+thu-tu: 2
+so-chuong: 40
+so-tu: ≈ 85.700
+gioi-thieu: Hành trình qua tám truyền thống lớn của nhân loại, từ Ấn Độ giáo, Phật giáo, Do Thái giáo, Kitô giáo, Hồi giáo, tới minh triết Đông Á, tôn giáo Việt Nam và nhiều truyền thống khác. Mỗi tôn giáo được trình bày từ bên trong, công bằng, kèm mục gỡ những hiểu lầm thường gặp.

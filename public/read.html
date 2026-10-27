@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="vi" data-page="read" data-read="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Đang đọc…</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,600&family=Noto+Serif:ital,wght@0,400;0,600;1,400&display=swap&subset=vietnamese" rel="stylesheet">
+<link rel="stylesheet" href="assets/app.css">
+</head>
+<body>
+<div class="reader">
+  <div class="topbar">
+    <button class="tool menu-btn" id="menuBtn" title="Mục lục" aria-label="Mục lục">
+      <svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+    <a class="home" href="index.html"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>Thư viện</a>
+    <div class="bt" id="bookTitle">Tôn giáo thế giới</div>
+    <div class="tools">
+      <button class="tool" id="fsDown" title="Chữ nhỏ hơn" aria-label="Chữ nhỏ hơn">A−</button>
+      <button class="tool" id="fsUp" title="Chữ lớn hơn" aria-label="Chữ lớn hơn">A+</button>
+      <button class="tool" id="themeBtn" title="Đổi nền đọc" aria-label="Đổi nền đọc">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3v18" fill="currentColor" stroke="none"/></svg>
+      </button>
+      <a class="tool dl" id="dlEpub" href="#" download title="Tải EPUB"><svg viewBox="0 0 24 24"><path d="M12 3v13m0 0 4-4m-4 4-4-4M5 21h14"/></svg><span class="txt">EPUB</span></a>
+      <a class="tool dl" id="dlPdf" href="#" download title="Tải PDF"><svg viewBox="0 0 24 24"><path d="M12 3v13m0 0 4-4m-4 4-4-4M5 21h14"/></svg><span class="txt">PDF</span></a>
+    </div>
+  </div>
+
+  <div class="reader-body">
+    <nav class="toc" id="toc"></nav>
+    <div class="scrim" id="scrim"></div>
+    <div class="reading">
+      <article class="scroller" id="scroller">
+        <p style="text-align:center;color:var(--rmuted)">Đang tải nội dung…</p>
+      </article>
+      <nav class="chnav" id="chnav"></nav>
+    </div>
+  </div>
+</div>
+<script src="books.js"></script>
+<script src="assets/reader.js"></script>
+<script src="assets/chat.js" defer></script>
+</body>
+</html>

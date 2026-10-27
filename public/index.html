@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="vi" data-page="home">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Thư viện · Hùng Linh</title>
+<meta name="description" content="Thư viện sách của Hùng Linh — đọc online và tải EPUB, PDF.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Noto+Serif:ital,wght@0,400;0,600;1,400&display=swap&subset=vietnamese" rel="stylesheet">
+<link rel="stylesheet" href="assets/app.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="site-top">
+    <div class="brand">Tủ sách <b>Hùng&nbsp;Linh</b></div>
+    <div class="tag">Đọc online · Tải EPUB / PDF</div>
+  </header>
+
+  <section class="hero">
+    <p class="lead">Nơi lưu giữ các cuốn sách do Hùng Linh biên soạn. Đọc trực tiếp trên trình duyệt, hoặc tải bản EPUB và PDF về đọc trên mọi thiết bị.</p>
+    <div class="frieze" aria-hidden="true">
+      <!-- hoa sen -->
+      <svg viewBox="0 0 32 32"><path d="M16 27C10 22 6 17 16 6c10 11 6 16 0 21Z"/><path d="M16 27C9 24 4 20 5 13c7 2 10 7 11 14"/><path d="M16 27c7-3 12-7 11-14-7 2-10 7-11 14"/></svg>
+      <!-- pháp luân -->
+      <svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="11"/><circle cx="16" cy="16" r="3"/><path d="M16 5v22M5 16h22M8.2 8.2 23.8 23.8M23.8 8.2 8.2 23.8"/></svg>
+      <!-- ngôi sao David -->
+      <svg viewBox="0 0 32 32"><path d="M16 4 27 23 5 23Z"/><path d="M16 28 5 9 27 9Z"/></svg>
+      <!-- thánh giá -->
+      <svg viewBox="0 0 32 32"><path d="M16 4v24M8 12h16"/></svg>
+      <!-- trăng lưỡi liềm và sao -->
+      <svg viewBox="0 0 32 32"><path d="M20 6a11 11 0 1 0 0 20 9 9 0 1 1 0-20Z"/><path d="M25 10l1.1 2.4 2.6.3-1.9 1.8.5 2.6-2.3-1.2-2.3 1.2.5-2.6-1.9-1.8 2.6-.3z"/></svg>
+      <!-- âm dương -->
+      <svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="11"/><path d="M16 5a5.5 5.5 0 0 0 0 11 5.5 5.5 0 0 1 0 11"/><circle cx="16" cy="10.5" r="1"/><circle cx="16" cy="21.5" r="1"/></svg>
+      <!-- sao tám cánh -->
+      <svg viewBox="0 0 32 32"><rect x="7" y="7" width="18" height="18"/><rect x="7" y="7" width="18" height="18" transform="rotate(45 16 16)"/></svg>
+    </div>
+    <div class="rule-gold"></div>
+  </section>
+
+  <main class="shelf">
+    <div class="shelf-head">
+      <h2>Trên kệ</h2>
+      <span id="count"></span>
+    </div>
+    <div class="grid" id="grid"></div>
+  </main>
+
+  <footer class="site-foot">
+    <div>© 2026 Hùng Linh. Giữ mọi quyền.</div>
+    <div class="wm">by: hunglinhbt@gmail.com</div>
+  </footer>
+</div>
+<script src="books.js"></script>
+<script src="assets/library.js"></script>
+<script src="assets/chat.js" defer></script>
+</body>
+</html>

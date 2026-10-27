@@ -1,0 +1,9 @@
+tieu-de: Hai nghìn năm rưỡi của một cuộc trò chuyện
+phu-de: Giáo trình triết học phương Tây
+tac-gia: Hùng Linh
+nam: 2026
+nhan: Giáo trình
+thu-tu: 3
+so-chuong: 40
+so-tu: ≈ 95.100
+gioi-thieu: Hành trình sáu phần qua triết học phương Tây, từ các nhà tự nhiên học Miletus, qua Socrates, Plato, Aristotle, thời trung cổ, cách mạng nhận thức luận, tới hiện sinh và Wittgenstein. Kể lại như một cuộc trò chuyện chưa kết thúc kéo dài hai nghìn năm rưỡi.
