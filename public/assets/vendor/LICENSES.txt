@@ -1,0 +1,5 @@
+Thư viện bên thứ ba dùng cho trang Chuyển sang EPUB:
+- JSZip 3.10.1 (MIT/GPLv3) https://stuk.github.io/jszip/
+- mammoth.js 1.8.0 (BSD-2) https://github.com/mwilliamson/mammoth.js
+- marked 12.0.2 (MIT) https://marked.js.org
+- PDF.js 3.11.174 (Apache-2.0) https://mozilla.github.io/pdf.js/
