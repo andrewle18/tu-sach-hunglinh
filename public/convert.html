@@ -4,7 +4,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Chuyển sang EPUB · Tủ sách Hùng Linh</title>
-<meta name="description" content="Chuyển Word, Markdown, văn bản, HTML, FB2, PDF sang EPUB ngay trên trình duyệt. File không rời khỏi máy bạn.">
 <meta name="theme-color" content="#141414">
 <script>try{var u=localStorage.getItem('ui-theme');if(u)document.documentElement.setAttribute('data-ui',u)}catch(e){}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,73 +15,18 @@
 <div class="app cv-app">
   <header class="lib-head">
     <a class="round-btn" href="index.html" aria-label="Về thư viện"><svg class="i" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></a>
-    <h1 style="flex:1;margin-left:14px">Chuyển sang EPUB</h1>
+    <h1>Chuyển sang EPUB</h1>
   </header>
-  <p class="cv-lead">Đổi Word, Markdown, văn bản, HTML, FB2 hoặc PDF thành sách EPUB có mục lục và bìa, đọc được trên Kindle, Apple Books, Google Play Sách và mọi máy đọc. Mọi việc chạy ngay trong trình duyệt của bạn: file không được gửi lên đâu cả.</p>
 
-  <!-- Bước 1 -->
-  <section class="cv-step">
-    <h2><span>1</span>Chọn file</h2>
-    <label class="cv-drop" id="drop">
-      <input type="file" id="pick" multiple accept=".docx,.md,.markdown,.txt,.html,.htm,.xhtml,.fb2,.pdf">
-      <svg class="i" viewBox="0 0 24 24"><path d="M12 16V4m0 0-5 5m5-5 5 5M4 20h16"/></svg>
-      <b>Kéo thả file vào đây hoặc bấm để chọn</b>
-      <small>DOCX · MD · TXT · HTML · FB2 · PDF có chữ. Chọn nhiều file để gộp thành một cuốn, theo thứ tự trong danh sách.</small>
-    </label>
-    <ul class="cv-files" id="fileList"></ul>
-  </section>
+  <label class="cv-drop" id="drop">
+    <input type="file" id="pick" multiple accept=".docx,.md,.markdown,.txt,.html,.htm,.xhtml,.fb2,.pdf">
+    <span class="cv-plus"><svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span>
+    <b>Chọn file</b>
+    <small>DOCX · PDF · TXT · MD · HTML · FB2</small>
+  </label>
 
-  <!-- Bước 2 -->
-  <section class="cv-step" id="step2" hidden>
-    <h2><span>2</span>Thông tin sách</h2>
-    <div class="cv-meta">
-      <div class="cv-cover">
-        <img id="coverPreview" alt="Xem trước bìa">
-        <canvas id="coverCanvas" width="1600" height="2560" hidden></canvas>
-      </div>
-      <div class="cv-fields">
-        <label>Tên sách<input id="mTitle" autocomplete="off"></label>
-        <label>Tác giả<input id="mAuthor" autocomplete="off"></label>
-        <label>Ngôn ngữ
-          <select id="mLang"><option value="vi">Tiếng Việt</option><option value="en">Tiếng Anh</option><option value="fr">Tiếng Pháp</option><option value="zh">Tiếng Trung</option><option value="ja">Tiếng Nhật</option><option value="ko">Tiếng Hàn</option></select>
-        </label>
-        <div class="cv-radio">
-          <span>Bìa</span>
-          <label><input type="radio" name="cover" value="auto" checked> Tự tạo bìa chữ</label>
-          <label><input type="radio" name="cover" value="upload"> Dùng ảnh của tôi</label>
-        </div>
-        <div id="coverPick" hidden><input type="file" id="coverFile" accept="image/jpeg,image/png,image/webp"></div>
-      </div>
-    </div>
-    <div class="cv-opts">
-      <label><input type="checkbox" id="optDetect" checked> Tự nhận tiêu đề chương <small>Dòng bắt đầu bằng “Phần…”, “Chương…”, “Lời nói đầu”, “Phụ lục”… được coi là tiêu đề.</small></label>
-      <label><input type="checkbox" id="optFonts"> Nhúng font chữ đủ dấu tiếng Việt <small>Thêm khoảng 2,5 MB. Chỉ cần khi máy đọc của bạn hiện dấu tiếng Việt bị lỗi.</small></label>
-    </div>
-  </section>
-
-  <!-- Bước 3 -->
-  <section class="cv-step" id="step3" hidden>
-    <h2><span>3</span>Mục lục</h2>
-    <p class="cv-hint">Bạn có thể sửa tên từng mục ngay trong danh sách.</p>
-    <div class="cv-warn" id="warn"></div>
-    <ol class="cv-toc" id="toc"></ol>
-    <div class="cv-make">
-      <button class="btn primary" id="make" disabled><svg viewBox="0 0 24 24"><path d="M12 3v13m0 0 5-5m-5 5-5-5M5 21h14"/></svg>Tạo và tải EPUB</button>
-      <a class="btn" id="dl" hidden><svg viewBox="0 0 24 24"><path d="M12 3v13m0 0 5-5m-5 5-5-5M5 21h14"/></svg><span></span></a>
-    </div>
-  </section>
-
-  <p class="cv-status" id="status" role="status" aria-live="polite"></p>
-
-  <details class="cv-help">
-    <summary>Mẹo để có EPUB đẹp</summary>
-    <ul>
-      <li><b>Word:</b> đặt kiểu <i>Heading 1</i> cho tên chương (và <i>Heading 2</i> cho mục nhỏ). Đây là cách chắc chắn nhất để có mục lục đúng. File .doc đời cũ hãy mở Word và lưu lại thành .docx.</li>
-      <li><b>Văn bản thường (.txt):</b> để tên chương trên một dòng riêng, ví dụ “Chương 1. Tên chương”, và cách các đoạn bằng một dòng trống.</li>
-      <li><b>PDF:</b> chỉ lấy được chữ, không giữ bố cục trang. Kết quả tốt nhất với sách chữ thuần; sách nhiều cột, nhiều bảng hoặc bản scan ảnh sẽ không đẹp. Nếu có file Word gốc, hãy dùng file Word.</li>
-      <li><b>Gửi lên Kindle:</b> dùng tính năng “Send to Kindle” của Amazon, gửi thẳng file EPUB.</li>
-    </ul>
-  </details>
+  <ul class="cv-results" id="results"></ul>
+  <canvas id="coverCanvas" width="1600" height="2560" hidden></canvas>
 </div>
 
 <script src="assets/vendor/jszip.min.js"></script>

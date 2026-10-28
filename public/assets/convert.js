@@ -22,7 +22,8 @@
     var h = Array.from(b, function (x) { return x.toString(16).padStart(2, "0"); }).join("");
     return h.slice(0, 8) + "-" + h.slice(8, 12) + "-" + h.slice(12, 16) + "-" + h.slice(16, 20) + "-" + h.slice(20);
   }
-  function status(msg, kind) { var el = $("status"); el.textContent = msg || ""; el.className = "cv-status" + (kind ? " " + kind : ""); }
+  var statusEl = null;
+  function status(msg) { if (statusEl) statusEl.textContent = msg || ""; }
   function decodeText(ab) {
     try { return new TextDecoder("utf-8", { fatal: true }).decode(ab).replace(/^﻿/, ""); }
     catch (e) {
@@ -326,7 +327,7 @@
         h.remove();
       });
       if (i === 0) autoMeta = res.meta || {};
-      if ($("optDetect").checked) detectHeadings(part);
+      detectHeadings(part);
       if (state.files.length > 1 && !part.querySelector("h1,h2")) {
         var h = doc.createElement("h1"); h.textContent = (res.meta && res.meta.title) || baseName(f.name); part.insertBefore(h, part.firstChild);
       }
@@ -490,7 +491,7 @@
 
     // kiểu chữ
     var fontCss = "";
-    if ($("optFonts").checked) {
+    if (false) {
       var fonts = [["DejaVuSerif.ttf", "normal", "normal"], ["DejaVuSerif-Bold.ttf", "bold", "normal"], ["DejaVuSerif-Italic.ttf", "normal", "italic"], ["DejaVuSerif-BoldItalic.ttf", "bold", "italic"]];
       for (var fi = 0; fi < fonts.length; fi++) {
         status("Đang nhúng font chữ…");
@@ -555,107 +556,60 @@
     return await new Promise(function (r) { $("coverCanvas").toBlob(r, "image/jpeg", 0.9); });
   }
 
-  /* ---------------- giao diện ---------------- */
+  /* ---------------- giao diện: chọn file → tự chuyển → tải ---------------- */
   var ACCEPT = ["docx", "md", "markdown", "txt", "text", "html", "htm", "xhtml", "fb2", "pdf"];
+  var DL = '<svg viewBox="0 0 24 24"><path d="M12 3v13m0 0 5-5m-5 5-5-5M5 21h14"/></svg>';
+  var queue = Promise.resolve();
+
+  function row(name) {
+    var li = document.createElement("li");
+    li.className = "cv-row busy";
+    li.innerHTML = '<div class="cv-thumb"><span class="spin"></span></div><div class="cv-info"><b>' + esc(baseName(name)) + '</b><small>Đang chuyển…</small></div><div class="cv-act"></div>';
+    $("results").appendChild(li);
+    return li;
+  }
+
+  async function convertOne(file, li) {
+    var info = li.querySelector("small");
+    statusEl = info;
+    state.files = [file]; state.meta = { title: "", author: "", lang: "vi" }; state.titleEdits = {}; state.cover = null;
+    try {
+      var book = await buildBook(status);
+      var title = book.autoMeta.title || baseName(file.name);
+      var out = await makeEpub(book);
+      var url = URL.createObjectURL(out.blob);
+      var cover = $("coverCanvas").toDataURL("image/jpeg", 0.6);
+      li.className = "cv-row done";
+      li.querySelector(".cv-thumb").innerHTML = '<img src="' + cover + '" alt="">';
+      li.querySelector("b").textContent = title;
+      info.textContent = book.chapters.length + " chương · " + fmtSize(out.blob.size);
+      li.querySelector(".cv-act").innerHTML = '<a class="cv-dl" href="' + url + '" download="' + esc(out.name) + '" aria-label="Tải ' + esc(out.name) + '">' + DL + '<span>EPUB</span></a>';
+    } catch (err) {
+      console.error(err);
+      li.className = "cv-row fail";
+      li.querySelector(".cv-thumb").innerHTML = "!";
+      info.textContent = err.message || "Không chuyển được file này.";
+    }
+    statusEl = null;
+  }
+
   function addFiles(list) {
-    var bad = [];
     Array.from(list).forEach(function (f) {
-      if (ACCEPT.indexOf(ext(f.name)) >= 0) state.files.push(f);
-      else if (/\.(doc|mobi|azw3?|epub|odt|rtf|pages)$/i.test(f.name)) bad.push(f.name + (/\.doc$/i.test(f.name) ? " (hãy lưu lại thành .docx)" : /\.epub$/i.test(f.name) ? " (đã là EPUB)" : " (chưa hỗ trợ)"));
-      else bad.push(f.name);
+      var li = row(f.name);
+      if (ACCEPT.indexOf(ext(f.name)) < 0) {
+        li.className = "cv-row fail"; li.querySelector(".cv-thumb").innerHTML = "!";
+        li.querySelector("small").textContent = /\.doc$/i.test(f.name) ? "File .doc cũ: mở bằng Word và lưu lại thành .docx" : "Định dạng chưa hỗ trợ";
+        return;
+      }
+      queue = queue.then(function () { return convertOne(f, li); });
     });
-    renderFiles();
-    if (bad.length) status("Không nhận: " + bad.join(", "), "warn");
-    analyze();
   }
-  function renderFiles() {
-    var el = $("fileList");
-    el.innerHTML = state.files.map(function (f, i) {
-      return '<li><span class="ft">' + esc(ext(f.name).toUpperCase()) + '</span><span class="fn">' + esc(f.name) + '<small>' + fmtSize(f.size) + '</small></span>' +
-        '<span class="fa"><button data-up="' + i + '" aria-label="Lên"' + (i ? "" : " disabled") + '>↑</button><button data-down="' + i + '" aria-label="Xuống"' + (i < state.files.length - 1 ? "" : " disabled") + '>↓</button><button data-rm="' + i + '" aria-label="Bỏ">✕</button></span></li>';
-    }).join("");
-    $("drop").classList.toggle("has", state.files.length > 0);
-    $("step2").hidden = $("step3").hidden = !state.files.length;
-  }
-  $("fileList").addEventListener("click", function (e) {
-    var b = e.target.closest("button"); if (!b) return;
-    var f = state.files;
-    if (b.dataset.rm) f.splice(+b.dataset.rm, 1);
-    else if (b.dataset.up) { var i = +b.dataset.up; f.splice(i - 1, 0, f.splice(i, 1)[0]); }
-    else if (b.dataset.down) { var j = +b.dataset.down; f.splice(j + 1, 0, f.splice(j, 1)[0]); }
-    renderFiles(); analyze();
-  });
+
   var drop = $("drop");
   ["dragenter", "dragover"].forEach(function (ev) { drop.addEventListener(ev, function (e) { e.preventDefault(); drop.classList.add("over"); }); });
   ["dragleave", "drop"].forEach(function (ev) { drop.addEventListener(ev, function (e) { e.preventDefault(); drop.classList.remove("over"); }); });
   drop.addEventListener("drop", function (e) { if (e.dataTransfer.files.length) addFiles(e.dataTransfer.files); });
   $("pick").addEventListener("change", function () { addFiles(this.files); this.value = ""; });
-
-  ["mTitle", "mAuthor"].forEach(function (id) {
-    $(id).addEventListener("input", function () { state.metaTouched[id] = true; state.meta[id === "mTitle" ? "title" : "author"] = this.value.trim(); refreshCover(); });
-  });
-  $("mLang").addEventListener("change", function () { state.meta.lang = this.value; });
-  document.querySelectorAll('input[name="cover"]').forEach(function (r) { r.addEventListener("change", function () { $("coverPick").hidden = this.value !== "upload"; if (this.value === "auto") { state.cover = null; } refreshCover(); }); });
-  $("coverFile").addEventListener("change", function () { state.cover = this.files[0] || null; refreshCover(); });
-  $("optDetect").addEventListener("change", analyze);
-
-  var coverT = null;
-  function refreshCover() {
-    clearTimeout(coverT);
-    coverT = setTimeout(async function () {
-      var img = $("coverPreview");
-      if (state.cover) { img.src = URL.createObjectURL(state.cover); return; }
-      var t = state.meta.title || (state.book && state.book.autoMeta.title) || (state.files[0] ? baseName(state.files[0].name) : "Tên sách");
-      var a = state.meta.author || (state.book && state.book.autoMeta.author) || "";
-      await drawCover(t, a); img.src = $("coverCanvas").toDataURL("image/jpeg", 0.8);
-    }, 250);
-  }
-
-  var analyzeId = 0;
-  async function analyze() {
-    var my = ++analyzeId;
-    state.titleEdits = {}; state.book = null;
-    $("toc").innerHTML = ""; $("warn").innerHTML = ""; $("make").disabled = true;
-    if (!state.files.length) { status(""); return; }
-    try {
-      var book = await buildBook(function (m) { if (my === analyzeId) status(m); });
-      if (my !== analyzeId) return;
-      state.book = book;
-      if (!state.metaTouched.mTitle) { state.meta.title = ""; $("mTitle").placeholder = book.autoMeta.title || baseName(state.files[0].name); }
-      if (!state.metaTouched.mAuthor) { state.meta.author = ""; $("mAuthor").placeholder = book.autoMeta.author || "Tên tác giả"; }
-      renderToc(book); refreshCover();
-      var words = book.chapters.reduce(function (s, c) { return s + c.words; }, 0);
-      status("Đã đọc xong: " + book.chapters.length + " mục, khoảng " + words.toLocaleString("vi-VN") + " chữ.", "ok");
-      $("make").disabled = false;
-    } catch (err) {
-      if (my !== analyzeId) return;
-      console.error(err); status(err.message || "Không đọc được file.", "err");
-    }
-  }
-  function renderToc(book) {
-    $("warn").innerHTML = book.warnings.map(function (w) { return "<p>" + esc(w) + "</p>"; }).join("");
-    $("toc").innerHTML = book.chapters.map(function (c, i) {
-      var cls = c.kind === "part" ? "part" : (book.partsMode && c.kind === "chapter" ? "sub" : "");
-      return '<li class="' + cls + '"><input value="' + esc(c.title) + '" data-i="' + i + '" aria-label="Tên mục ' + (i + 1) + '"><small>' + c.words.toLocaleString("vi-VN") + " chữ" + (c.subs.length ? " · " + c.subs.length + " mục con" : "") + "</small></li>";
-    }).join("");
-  }
-  $("toc").addEventListener("input", function (e) { var i = e.target.dataset.i; if (i != null) state.titleEdits[i] = e.target.value.trim(); });
-
-  $("make").addEventListener("click", async function () {
-    var btn = this; btn.disabled = true;
-    try {
-      var edits = state.titleEdits;
-      var book = await buildBook(status); // dựng lại để có cây DOM mới
-      state.titleEdits = edits;
-      var out = await makeEpub(book);
-      var url = URL.createObjectURL(out.blob);
-      var a = $("dl"); a.href = url; a.download = out.name; a.hidden = false;
-      a.querySelector("span").textContent = "Tải lại " + out.name + " (" + fmtSize(out.blob.size) + ")";
-      a.click();
-      status("Xong. File " + out.name + " (" + fmtSize(out.blob.size) + ") đã được tải về máy.", "ok");
-    } catch (err) { console.error(err); status("Lỗi khi tạo EPUB: " + (err.message || err), "err"); }
-    btn.disabled = false;
-  });
 
   window.__convert = { buildBook: buildBook, makeEpub: makeEpub, state: state, addFiles: addFiles };
 })();
