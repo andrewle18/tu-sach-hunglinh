@@ -61,7 +61,7 @@ const decodeEntities = (s) =>
    .replace(/&#(\d+);/g, (_, d) => String.fromCodePoint(+d))
    .replace(/&nbsp;/g, " ").replace(/&lt;/g, "<").replace(/&gt;/g, ">")
    .replace(/&quot;/g, '"').replace(/&apos;/g, "'").replace(/&amp;/g, "&");
-const stripTags = (s) => decodeEntities(s.replace(/<[^>]+>/g, " ")).replace(/\s+/g, " ").trim();
+const stripTags = (s) => decodeEntities(s.replace(/<[^>]+>/g, " ")).replace(/\s+/g, " ").replace(/\s+([,.:;!?…)\]”’])/g, "$1").replace(/([(\[“‘])\s+/g, "$1").trim();
 const escHtml = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const posix = (...a) => path.posix.normalize(path.posix.join(...a));
 const urlPath = (...segs) => segs.map((s) => s.split("/").map(encodeURIComponent).join("/")).join("/");

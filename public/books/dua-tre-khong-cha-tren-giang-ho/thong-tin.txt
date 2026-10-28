@@ -1,0 +1,5 @@
+nhan: Phê bình văn học
+thu-tu: 1.7
+tac-gia: Lê Hùng Linh
+nam: 2026
+gioi-thieu: Vì sao những người hùng của Kim Dung gần như không bao giờ có một người cha bình thường? Ba mươi sáu chương đọc mười lăm bộ truyện theo motif, soi Quách Tĩnh, Dương Quá, Lệnh Hồ Xung, Vi Tiểu Bảo, Nhạc Bất Quần và nhiều nhân vật khác bằng lý thuyết gắn bó, bản sắc, phát triển đạo đức, sang chấn và tâm lý học quyền lực.
