@@ -1,4 +1,5 @@
-// Tủ sách Hùng Linh: Worker nhỏ chỉ lo ô chat.
+// Tủ sách Hùng Linh: Worker nhỏ lo ô chat và công cụ dịch.
+import { handleTranslate } from "./translate.js";
 // Mọi request khác được Cloudflare phục vụ thẳng từ public/ (static assets).
 // POST /api/message  ->  chuyển tin nhắn tới Telegram của chủ site.
 
@@ -73,6 +74,7 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     if (url.pathname === "/api/message") return handleMessage(request, env);
+    if (url.pathname.startsWith("/api/tr/")) return handleTranslate(request, env, url);
     return env.ASSETS.fetch(request);
   },
 };

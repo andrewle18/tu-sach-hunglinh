@@ -286,3 +286,19 @@ html[data-chat="menu"] .chat{bottom:calc(var(--tabbar-h) + 26px)}
 .cv-dl svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:2.2}
 .spin{width:20px;height:20px;border-radius:50%;border:2.5px solid var(--line);border-top-color:var(--accent);animation:cvspin .8s linear infinite}
 @keyframes cvspin{to{transform:rotate(360deg)}}
+
+/* ================= DỊCH ================= */
+.tr-gate{display:flex;flex-direction:column;align-items:center;gap:16px;min-height:260px;justify-content:center;margin-top:8px;border:1px solid var(--line);border-radius:22px;background:var(--surface);padding:24px}
+.tr-gate[hidden]{display:none}
+.tr-gate form{display:flex;gap:8px;width:min(340px,100%)}
+.tr-gate input{flex:1;min-width:0;height:48px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit;font-size:1rem;padding:0 14px}
+.tr-gate button{height:48px;padding:0 20px;border-radius:12px;border:0;background:var(--ink);color:var(--bg);font-weight:600;cursor:pointer}
+.tr-gate p{margin:0;color:#ff7a70;font-size:.88rem;min-height:1.2em;text-align:center}
+.tr-ext{font-size:.62rem;color:var(--ink-soft);letter-spacing:.02em}
+.cv-row.fail .tr-ext{color:#ff7a70;font-size:1rem}
+.tr-bar{height:3px;border-radius:3px;background:var(--surface-2);margin-top:8px;overflow:hidden}
+.tr-bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .4s}
+.cv-row.done .tr-bar,.cv-row.fail .tr-bar{display:none}
+.tr-foot{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:18px;color:var(--muted);font-size:.8rem}
+.tr-foot button{border:1px solid var(--line);background:none;color:var(--ink-soft);border-radius:999px;padding:6px 14px;cursor:pointer;font-size:.8rem}
+#work[hidden]{display:none}

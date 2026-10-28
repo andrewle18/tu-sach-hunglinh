@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="vi" data-page="translate" data-chat="menu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Dịch sang tiếng Việt · Tủ sách Hùng Linh</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#141414">
+<script>try{var u=localStorage.getItem('ui-theme');if(u)document.documentElement.setAttribute('data-ui',u)}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;0,7..72,700;1,7..72,400&display=swap&subset=vietnamese" rel="stylesheet">
+<link rel="stylesheet" href="assets/app.css">
+</head>
+<body>
+<div class="app cv-app">
+  <header class="lib-head">
+    <a class="round-btn" href="index.html" aria-label="Về thư viện"><svg class="i" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></a>
+    <h1>Dịch sang tiếng Việt</h1>
+  </header>
+
+  <div class="tr-gate" id="gate" hidden>
+    <span class="cv-plus"><svg class="i" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>
+    <form id="gateForm" autocomplete="on">
+      <input type="text" name="username" value="tusach" autocomplete="username" hidden>
+      <input type="password" id="pass" placeholder="Mật khẩu" autocomplete="current-password" required>
+      <button type="submit">Mở</button>
+    </form>
+    <p id="gateMsg"></p>
+  </div>
+
+  <div id="work" hidden>
+    <label class="cv-drop" id="drop">
+      <input type="file" id="pick" multiple accept=".epub,.docx,.pdf,.txt,.md,.markdown,.html,.htm,.pptx">
+      <span class="cv-plus"><svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span>
+      <b>Chọn file tiếng Anh</b>
+      <small>EPUB · DOCX · PDF · TXT · MD · HTML</small>
+    </label>
+    <ul class="cv-results" id="results"></ul>
+    <div class="tr-foot"><span id="usage"></span><button id="logout" type="button">Khoá</button></div>
+  </div>
+</div>
+
+<script src="assets/vendor/jszip.min.js"></script>
+<script src="assets/translate.js"></script>
+</body>
+</html>
