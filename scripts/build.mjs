@@ -181,6 +181,15 @@ function parseEpub(file) {
       parent.isPart = true;
     }
   }
+  // "Phần" chỉ là phần thật (chia tiếp thành trang) khi bên trong có mục "Chương …".
+  // Bài tiểu luận chia "Phần 1, Phần 2" với các tiểu mục ngắn thì mỗi Phần là một trang.
+  parent = null;
+  const hasChapterChild = new Set();
+  for (const e of entries) {
+    if (e.level === 1) parent = e;
+    else if (parent && CHAP_RE.test(e.title)) hasChapterChild.add(parent);
+  }
+  for (const e of entries) if (e.level === 1 && e.isPart && !hasChapterChild.has(e)) e.isPart = false;
   parent = null;
   entries = entries.filter((e) => {
     if (e.level === 1) { parent = e; return true; }
