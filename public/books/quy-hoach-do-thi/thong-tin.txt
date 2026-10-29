@@ -1,4 +1,4 @@
 nhan: Sách phổ thông
 thu-tu: 4.5
 nam: 2026
-gioi-thieu: Mỗi sáng, hàng triệu người dắt xe ra khỏi một con hẻm, đi qua những ngã tư mà họ chưa từng chọn. Ba mươi tám chương, tám phần về việc ai vẽ nên hình dạng thành phố và vì sao: từ lý do con người chọn sống chen chúc, lịch sử tư tưởng quy hoạch, giao thông, nhà ở, đất đai, tới cách đọc một bản đồ quy hoạch như người trong nghề, với nhiều ví dụ từ Thành phố Hồ Chí Minh và Hà Nội.
+gioi-thieu: Mỗi sáng, hàng triệu người dắt xe ra khỏi một con hẻm, đi qua những ngã tư mà họ chưa từng chọn. Ba mươi tám chương, tám phần về việc ai vẽ nên hình dạng thành phố và vì sao: từ lý do con người chọn sống chen chúc và lịch sử tư tưởng quy hoạch, qua đất đai, di chuyển, hạ tầng, môi trường và đời sống xã hội, tới đô thị Việt Nam và cách đọc một bản đồ quy hoạch như người trong nghề, với nhiều ví dụ từ Thành phố Hồ Chí Minh và Hà Nội.
