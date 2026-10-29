@@ -1,6 +1,6 @@
 tieu-de: Hai nghìn năm rưỡi của một cuộc trò chuyện
 phu-de: Giáo trình triết học phương Tây
-tac-gia: Hùng Linh
+tac-gia: Lê Hùng Linh
 nam: 2026
 nhan: Giáo trình
 thu-tu: 3

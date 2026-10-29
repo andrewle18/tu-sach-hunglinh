@@ -1,3 +1,4 @@
+tac-gia: Lê Hùng Linh
 nhan: Sách phổ thông
 thu-tu: 4.5
 nam: 2026

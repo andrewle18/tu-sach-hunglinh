@@ -1,6 +1,6 @@
 tieu-de: Tôn giáo thế giới
 phu-de: Dẫn nhập các truyền thống tâm linh lớn của nhân loại
-tac-gia: Hùng Linh
+tac-gia: Lê Hùng Linh
 nam: 2026
 nhan: Giáo trình
 thu-tu: 2
