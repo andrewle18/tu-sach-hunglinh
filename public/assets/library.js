@@ -17,7 +17,8 @@
   var ICON = {
     read: '<svg viewBox="0 0 24 24"><path d="M12 6c-1.6-1.2-3.7-2-6-2H2v14h4c2.3 0 4.4.8 6 2 1.6-1.2 3.7-2 6-2h4V4h-4c-2.3 0-4.4.8-6 2Zm0 0v14"/></svg>',
     down: '<svg viewBox="0 0 24 24"><path d="M12 3v13m0 0 5-5m-5 5-5-5M5 21h14"/></svg>',
-    check: '<svg viewBox="0 0 24 24"><path d="m5 12 4.5 4.5L19 7"/></svg>'
+    check: '<svg viewBox="0 0 24 24"><path d="m5 12 4.5 4.5L19 7"/></svg>',
+    share: '<svg viewBox="0 0 24 24"><path d="M12 15V3m0 0L8 7m4-4 4 4"/><path d="M6 11H5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1h-1"/></svg>'
   };
 
   /* ---------- trạng thái giao diện ---------- */
@@ -127,8 +128,9 @@
       (b.blurb ? '<p class="blurb">' + esc(b.blurb) + '</p>' : '<div style="height:18px"></div>') +
       '<div class="acts">' +
       '<a class="btn primary" href="' + esc(b.read) + '">' + ICON.read + esc(readLbl) + '</a>' +
-      (b.epub ? '<a class="btn" href="' + esc(b.epub) + '" download' + (b.pdf ? '' : ' style="grid-column:1/-1"') + '>' + ICON.down + 'EPUB</a>' : "") +
+      (b.epub ? '<a class="btn" href="' + esc(b.epub) + '" download>' + ICON.down + 'EPUB</a>' : "") +
       (b.pdf ? '<a class="btn" href="' + esc(b.pdf) + '" download>' + ICON.down + 'PDF</a>' : "") +
+      '<button class="btn" data-share="' + esc(b.slug) + '"' + ((b.epub ? 1 : 0) + (b.pdf ? 1 : 0) === 1 ? "" : ' style="grid-column:1/-1"') + '>' + ICON.share + 'Chia sẻ</button>' +
       '</div>'
     );
   }
@@ -155,6 +157,8 @@
     openSheet('<div class="menu"><h4>Giao diện thư viện</h4>' + opt("Tối", cur === "dark", 'data-ui="dark"') + opt("Sáng", cur === "light", 'data-ui="light"') + '</div>');
   }
   sheet.addEventListener("click", function (e) {
+    var sh = e.target.closest("[data-share]");
+    if (sh) { if (window.shareBySlug) window.shareBySlug(sh.dataset.share); return; }
     var t = e.target.closest("[data-sort],[data-view],[data-cat],[data-ui]");
     if (!t) return;
     if (t.dataset.sort) { ui.sort = t.dataset.sort; LS.set("lib-sort", ui.sort); }
@@ -213,6 +217,14 @@
 
   renderShelf();
   renderNowbar();
-  var startTab = LS.get("lib-tab");
-  if (startTab && startTab !== "lib") go(startTab);
+  var qBook = new URLSearchParams(location.search).get("book");
+  var linked = qBook && CAT.find(function (b) { return b.slug === qBook; });
+  if (linked) {
+    go("lib");
+    history.replaceState(null, "", location.pathname);
+    bookSheet(linked);
+  } else {
+    var startTab = LS.get("lib-tab");
+    if (startTab && startTab !== "lib") go(startTab);
+  }
 })();

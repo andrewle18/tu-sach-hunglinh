@@ -306,6 +306,41 @@ function countWords(units) {
 }
 const fmtWords = (n) => "≈ " + (Math.round(n / 100) * 100).toLocaleString("de-DE");
 
+// ---------- trang chia sẻ: /sach/<ten-sach>/ có ảnh bìa, tên, giới thiệu cho Zalo, Facebook ----------
+const SITE = (process.env.SITE_URL || "https://small-voice-4cb4.lehunglinh18.workers.dev").replace(/\/$/, "");
+function writeSharePages(catalog) {
+  const dir = path.join(PUB, "sach");
+  fs.rmSync(dir, { recursive: true, force: true });
+  for (const b of catalog) {
+    const d = path.join(dir, b.slug);
+    fs.mkdirSync(d, { recursive: true });
+    const url = SITE + "/sach/" + encodeURIComponent(b.slug) + "/";
+    const img = b.cover ? SITE + "/" + b.cover : "";
+    const desc = (b.blurb || b.subtitle || "").slice(0, 300);
+    const target = "../../?book=" + encodeURIComponent(b.slug);
+    const t = escHtml(b.title + " · " + b.author);
+    fs.writeFileSync(path.join(d, "index.html"), `<!doctype html>
+<html lang="vi"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${t}</title>
+<meta name="description" content="${escHtml(desc)}">
+<meta property="og:type" content="book">
+<meta property="og:site_name" content="Tủ sách Hùng Linh">
+<meta property="og:title" content="${escHtml(b.title)}">
+<meta property="og:description" content="${escHtml(desc)}">
+<meta property="og:url" content="${escHtml(url)}">
+${img ? `<meta property="og:image" content="${escHtml(img)}">\n<meta name="twitter:image" content="${escHtml(img)}">` : ""}
+<meta property="book:author" content="${escHtml(b.author)}">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="${escHtml(url)}">
+<style>body{background:#141414;color:#eee;font-family:system-ui,sans-serif;display:grid;place-items:center;min-height:100vh;margin:0}a{color:#4da3ff}</style>
+</head><body><p><a href="${target}">Mở “${escHtml(b.title)}” trong Tủ sách Hùng Linh</a></p>
+<script>location.replace(${JSON.stringify(target)});</script>
+</body></html>
+`);
+  }
+}
+
 // ---------- chạy ----------
 function main() {
   if (!fs.existsSync(BOOKS)) fs.mkdirSync(BOOKS, { recursive: true });
@@ -373,6 +408,8 @@ function main() {
     console.log(`+ ${slug}: "${title}", ${units.length} mục, ${chapters} chương${pdfName ? ", có PDF" : ""}`);
   }
 
+  catalog.forEach((b) => { b.share = "sach/" + encodeURIComponent(b.slug) + "/"; });
+  writeSharePages(catalog);
   catalog.sort((a, b) => a.order - b.order || a.title.localeCompare(b.title, "vi"));
   catalog.forEach((b) => delete b.order);
   fs.writeFileSync(path.join(PUB, "books.js"),

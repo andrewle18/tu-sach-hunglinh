@@ -17,6 +17,7 @@
     <button class="ibtn" id="tocBtn" aria-label="Mục lục"><svg class="i" viewBox="0 0 24 24"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg></button>
     <div class="bt" id="bookTitle">Đang tải…<small id="chapTitle"></small></div>
     <button class="ibtn" id="aaBtn" aria-label="Cỡ chữ và giao diện"><span class="aa"><small>A</small>A</span></button>
+    <button class="ibtn" id="shareBtn" aria-label="Chia sẻ sách"><svg class="i" viewBox="0 0 24 24"><path d="M12 15V3m0 0L8 7m4-4 4 4"/><path d="M6 11H5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1h-1"/></svg></button>
     <button class="ibtn" id="dlBtn" aria-label="Tải sách"><svg class="i" viewBox="0 0 24 24"><path d="M12 3v13m0 0 5-5m-5 5-5-5M5 21h14"/></svg></button>
   </header>
 
@@ -66,7 +67,9 @@
 </section>
 
 <script src="books.js"></script>
+<script src="assets/share.js"></script>
 <script src="assets/reader.js"></script>
+<script>document.getElementById("shareBtn").onclick=function(){shareBySlug(new URLSearchParams(location.search).get("book")||(window.CATALOG[0]||{}).slug)};</script>
 <script src="assets/chat.js" defer></script>
 </body>
 </html>

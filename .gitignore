@@ -8,3 +8,4 @@ node_modules/
 # Sinh tự động khi build
 public/books.js
 public/books/*/auto/
+public/sach/
