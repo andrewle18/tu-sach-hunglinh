@@ -1,0 +1,5 @@
+tac-gia: Lê Hùng Linh
+thu-tu: 4.2
+nam: 2026
+nhan: Giáo trình
+gioi-thieu: Năm mươi chương, tám phần về cách thị trường tài chính thật sự vận hành: từ rủi ro, lãi kép và cấu trúc sàn giao dịch, qua đọc báo cáo tài chính và định giá doanh nghiệp, phân tích kỹ thuật cùng những gì bằng chứng nói về nó, tài chính hành vi, hợp đồng tương lai và quyền chọn, tới Bitcoin, DeFi, phái sinh tiền mã hóa và khung pháp lý mới ở Việt Nam. Thị trường Việt Nam và quốc tế được đặt cạnh nhau, mỗi chương khép lại bằng ba ngộ nhận lan truyền.
