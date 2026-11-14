@@ -1,7 +1,7 @@
 tieu-de: Thời Loạn. Quyển I: Tiệc tàn
-phu-de: Bản viết lại, Phần thứ nhất: Tháng Chín (1940–1941)
+phu-de: Phần thứ nhất: Tháng Chín (1940–1941)
 tac-gia: Lê Hùng Linh
 nam: 2026
 nhan: Tiểu thuyết
 thu-tu: 0.5
-gioi-thieu: Mùa thu năm 1940, quân Nhật tràn qua Đồng Đăng, và một dạ tiệc ở đường Carnot là đêm cuối cùng của một thế giới. Phần thứ nhất, mười hai chương, đi từ phủ đệ một ông quan về hưu ở Kim Long, hiệu lụa phố Hàng Đào, đồn biên giới Lạng Sơn, bản Tày dưới chân núi đá, tới sòng bạc Chợ Lớn, nhà ngục Sơn La và đêm giao thừa năm Tân Tỵ ở Huế. Đây là bản viết lại theo giọng mới; các phần sau sẽ được bổ sung dần.
+gioi-thieu: Tháng Chín năm 1940, quân Nhật tràn qua Đồng Đăng, và ở Hà Nội, một dạ tiệc trên đường Carnot trở thành đêm cuối cùng của một thời đã yên ổn quá lâu. Từ đêm ấy, mấy gia đình ở ba miền bước vào năm năm loạn lạc mà không ai lường trước được: nhà một ông quan về hưu ở Kim Long có người con trai học trường võ bị bên Tây trở về với cái chân què; nhà một hiệu lụa ở phố Hàng Đào có cô con gái út thêu tặng người ta một chiếc khăn rồi chờ mãi một lá thư; một cậu con rơi ở Chợ Lớn bỗng thành người giàu nhất Nam Kỳ mà không biết làm gì với gia tài ấy; một người lính khố đỏ giữ lá thư của ông đại úy đã chết và học chữ trong nhà ngục Sơn La. Đời họ đan vào nhau qua những năm Nhật Pháp cùng cai trị, qua nạn đói năm Ất Dậu, cho tới mùa thu năm 1945, khi mỗi người phải chọn mình đứng ở đâu.
